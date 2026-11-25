@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<!--
+  JNFAM Lab Supplies Management
+  © 2025–2026 Young Tai Kang. All rights reserved. Unauthorized use, copying, modification, or distribution without the written permission of Young Tai Kang is prohibited.
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JNFAM Lab Supplies</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--line:#e3e6ea;--text:#1d2430;--mute:#6b7480;--pri:#1f5fbf;--pri-l:#e8f0fc;--red:#c8382d;--red-l:#fdecea;--grn:#1f8a4c;--grn-l:#e6f5ec;--amb:#b26b00;--amb-l:#fff4e0}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+header{background:#fff;border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+header h1{font-size:18px;margin:0;font-weight:700}
+header h1 small{color:var(--mute);font-weight:500;font-size:12px;margin-left:6px}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{border:0;background:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:14px;color:var(--mute)}
+nav button.on{background:var(--pri-l);color:var(--pri);font-weight:600}
+.sp{flex:1}
+.badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;margin-left:4px}
+.lang{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.lang button{border:0;background:#fff;padding:6px 10px;cursor:pointer;font-size:12px}
+.lang button.on{background:var(--pri);color:#fff}
+main{max-width:1200px;margin:0 auto;padding:18px 20px 40px}
+.banner{padding:12px 16px;border-radius:8px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.banner.ok{background:var(--grn-l);color:var(--grn)}
+.banner.due{background:var(--amb-l);color:var(--amb)}
+.banner.over{background:var(--red-l);color:var(--red)}
+.banner b{font-size:15px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.kpi .l{color:var(--mute);font-size:12px}.kpi .v{font-size:22px;font-weight:700;margin-top:4px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+input,select,textarea{font:inherit;padding:7px 9px;border:1px solid #cfd4da;border-radius:6px;background:#fff;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-l);border-color:var(--pri)}
+.btn{border:1px solid #cfd4da;background:#fff;padding:7px 12px;border-radius:6px;cursor:pointer;font:inherit;white-space:nowrap}
+.btn:hover{background:#f2f4f7}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn.p:hover{background:#174d9c}
+.btn.d{color:var(--red);border-color:#efc2bd}.btn.d:hover{background:var(--red-l)}
+.btn.s{padding:4px 8px;font-size:12px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:12px;color:var(--mute);font-weight:600;background:#fafbfc;position:sticky;top:0}
+td.n,th.n{text-align:right}
+tr.grp td{background:#f1f4f8;font-weight:700;color:#334}
+tr.need td{background:#fff8f7}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.tag.need{background:var(--red-l);color:var(--red)}.tag.ok{background:var(--grn-l);color:var(--grn)}
+.tag.na{background:#eef0f3;color:var(--mute)}.tag.ord{background:var(--amb-l);color:var(--amb)}
+.muted{color:var(--mute);font-size:12px}
+.tw{overflow-x:auto}
+.qty{width:80px;text-align:right}
+.modal-bg{position:fixed;inset:0;background:rgba(20,25,35,.4);display:flex;align-items:flex-start;justify-content:center;padding:40px 12px;z-index:50;overflow:auto}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:560px;padding:18px 20px}
+.modal h3{margin:0 0 14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.grid2 label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute)}
+.grid2 .full{grid-column:1/-1}
+.mf{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);border-radius:14px;padding:3px 6px 3px 10px;display:flex;align-items:center;gap:4px;background:#fafbfc}
+.chip button{border:0;background:none;cursor:pointer;color:var(--mute);font-size:14px;line-height:1}
+.chip button:hover{color:var(--red)}
+details{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff}
+summary{padding:10px 14px;cursor:pointer;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+details .tw{padding:0 14px 12px}
+.st{font-size:11px;color:var(--mute);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#aaa}.dot.on{background:var(--grn)}
+footer{text-align:center;color:var(--mute);font-size:11px;padding:16px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1d2430;color:#fff;padding:9px 16px;border-radius:6px;z-index:99;font-size:13px}
+@media print{header,nav,.bar,.noprint,footer{display:none!important}body{background:#fff}.panel{border:0}}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>JNFAM Lab Supplies<small data-t="subtitle"></small></h1>
+  <nav id="nav"></nav>
+  <div class="sp"></div>
+  <span class="st"><span class="dot" id="dbdot"></span><span id="dbmode"></span></span>
+  <div class="lang"><button data-l="ko">한국어</button><button data-l="en">EN</button></div>
+</header>
+<main id="app"></main>
+<footer>© 2025–2026 Young Tai Kang. All rights reserved. Unauthorized use, copying, modification, or distribution without the written permission of Young Tai Kang is prohibited.</footer>
+
+<!-- Firebase (Realtime Database). Leave FIREBASE_CONFIG.apiKey empty to run in local (browser) mode. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+/* © 2025–2026 Young Tai Kang. All rights reserved. Unauthorized use, copying, modification, or distribution without the written permission of Young Tai Kang is prohibited. */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBkY5IGIPC0CsJB55hui7wqCffcCiS33NI",
+  authDomain:        "jnfam-task-plan.firebaseapp.com",
+  databaseURL:       "https://jnfam-task-plan-default-rtdb.firebaseio.com",
+  projectId:         "jnfam-task-plan",
+  storageBucket:     "jnfam-task-plan.firebasestorage.app",
+  messagingSenderId: "76859256151",
+  appId:             "1:76859256151:web:c056fd641305780908e212"
+};
+const DB_ROOT = "lab_supplies";
+const LS_KEY = "jnfam_lab_supplies_v1";
+
+/* ---------------- i18n ---------------- */
+const T = {
+ ko:{subtitle:"실험실 소모품 관리",tabItems:"품목",tabInsp:"재고 조사",tabBuy:"구매 필요",tabHist:"조사 이력",tabSet:"설정",
+  local:"로컬 모드(이 브라우저)",cloud:"Firebase 연결됨",
+  nextInsp:"다음 재고 조사 예정일",lastInsp:"마지막 조사",never:"조사 기록 없음",overdue:"조사 기한 경과",dueSoon:"조사 예정 임박",onTrack:"정상",days:"일",startInsp:"재고 조사 시작",
+  kTotal:"전체 품목",kNeed:"구매 필요",kOrdered:"주문 진행 중",kUnchecked:"미조사 품목",
+  search:"품목·Part# 검색",allLoc:"전체 위치",add:"+ 품목 추가",loc:"위치",item:"품목명",part:"Part #",spec:"규격",unit:"단위",stock:"현재고",min:"최소재고",orderQty:"기본 주문수량",vendor:"구매처",note:"비고",status:"상태",act:"",
+  need:"구매 필요",ok:"충분",na:"미조사",ordered:"주문됨",edit:"수정",del:"삭제",save:"저장",cancel:"취소",close:"닫기",
+  addItem:"품목 추가",editItem:"품목 수정",confirmDel:"이 품목을 삭제할까요?",nameReq:"품목명을 입력하세요.",
+  inspDate:"조사일",inspector:"조사자",counted:"조사 수량",inspHint:"수량을 입력하면 최소재고 이하인 품목은 자동으로 '구매 필요'로 표시됩니다. 빈 칸은 조사에서 제외됩니다.",
+  saveInsp:"조사 결과 저장",inspSaved:"재고 조사가 저장되었습니다.",inspectorReq:"조사자를 입력하세요.",copyStock:"현재고로 채우기",clearAll:"모두 비우기",
+  buyTitle:"구매 필요 목록",suggest:"권장 주문량",markOrd:"주문 처리",markRecv:"입고 처리",cancelOrd:"주문 취소",recvQty:"입고 수량을 입력하세요 (현재고에 더해집니다)",
+  noNeed:"구매가 필요한 품목이 없습니다.",csv:"CSV 내보내기",print:"인쇄",
+  noHist:"조사 이력이 없습니다.",itemsChecked:"조사 품목",needCnt:"구매 필요",delInsp:"이 조사 기록을 삭제할까요? (현재고는 변경되지 않습니다)",
+  setCycle:"재고 조사 주기",monthly:"매월",biweekly:"2주 간격",cycleStart:"조사 기준일 (기록이 없을 때 사용)",
+  setUnits:"단위 관리",setUnitsHint:"품목마다 단위가 다르므로 여기서 단위 목록을 관리하고 품목별로 선택합니다.",newUnit:"새 단위",addBtn:"추가",unitInUse:"사용 중인 단위는 삭제할 수 없습니다",
+  setLocs:"위치(구역) 관리",locKo:"한글명",locEn:"영문명",locInUse:"품목이 있는 위치는 삭제할 수 없습니다",
+  data:"데이터",exportJson:"백업(JSON) 내보내기",importJson:"백업 불러오기",importOk:"데이터를 불러왔습니다.",resetConfirm:"현재 데이터를 백업 파일로 덮어쓸까요?",
+  saved:"저장되었습니다.",deleted:"삭제되었습니다.",pack:"포장 단위 설명",packPh:"예: 12개입, 100매/팩",
+  noItems:"품목이 없습니다.",perUnit:"단위"},
+ en:{subtitle:"Lab Supplies Management",tabItems:"Items",tabInsp:"Stock Check",tabBuy:"To Purchase",tabHist:"History",tabSet:"Settings",
+  local:"Local mode (this browser)",cloud:"Firebase connected",
+  nextInsp:"Next stock check due",lastInsp:"Last check",never:"No checks yet",overdue:"Check overdue",dueSoon:"Check due soon",onTrack:"On track",days:"days",startInsp:"Start stock check",
+  kTotal:"Total items",kNeed:"Need purchase",kOrdered:"On order",kUnchecked:"Not yet counted",
+  search:"Search item / Part #",allLoc:"All locations",add:"+ Add item",loc:"Location",item:"Item",part:"Part #",spec:"Spec",unit:"Unit",stock:"On hand",min:"Min stock",orderQty:"Default order qty",vendor:"Vendor",note:"Note",status:"Status",act:"",
+  need:"Need purchase",ok:"OK",na:"Not counted",ordered:"Ordered",edit:"Edit",del:"Delete",save:"Save",cancel:"Cancel",close:"Close",
+  addItem:"Add item",editItem:"Edit item",confirmDel:"Delete this item?",nameReq:"Enter an item name.",
+  inspDate:"Check date",inspector:"Checked by",counted:"Counted qty",inspHint:"Items at or below their minimum stock are flagged 'Need purchase' automatically. Blank rows are skipped.",
+  saveInsp:"Save stock check",inspSaved:"Stock check saved.",inspectorReq:"Enter who did the check.",copyStock:"Fill with current stock",clearAll:"Clear all",
+  buyTitle:"Purchase list",suggest:"Suggested qty",markOrd:"Mark ordered",markRecv:"Receive",cancelOrd:"Cancel order",recvQty:"Quantity received (added to on-hand stock)",
+  noNeed:"Nothing needs to be purchased.",csv:"Export CSV",print:"Print",
+  noHist:"No stock checks recorded.",itemsChecked:"Items checked",needCnt:"Need purchase",delInsp:"Delete this check record? (On-hand stock is not changed)",
+  setCycle:"Stock check cycle",monthly:"Monthly",biweekly:"Every 2 weeks",cycleStart:"Cycle start date (used when no record exists)",
+  setUnits:"Units",setUnitsHint:"Units differ by item, so manage the unit list here and pick one per item.",newUnit:"New unit",addBtn:"Add",unitInUse:"Unit is in use and cannot be deleted",
+  setLocs:"Locations",locKo:"Korean name",locEn:"English name",locInUse:"Location has items and cannot be deleted",
+  data:"Data",exportJson:"Export backup (JSON)",importJson:"Import backup",importOk:"Data imported.",resetConfirm:"Overwrite current data with the backup file?",
+  saved:"Saved.",deleted:"Deleted.",pack:"Package description",packPh:"e.g. 12 pk, 100 sheets/pack",
+  noItems:"No items.",perUnit:"Unit"}
+};
+let lang = localStorage.getItem("lab_lang") || "ko";
+const t = k => (T[lang][k] ?? k);
+
+/* ---------------- seed data (from LAB_SUPPLIES.xlsx) ---------------- */
+function seed(){
+  const locs = [
+    {id:"icp_sol",ko:"ICP-MS Room · 시약",en:"ICP-MS Room · Solutions",order:1},
+    {id:"icp_part",ko:"ICP-MS Room · 장비 부품",en:"ICP-MS Room · Instrument Parts",order:2},
+    {id:"lab",ko:"실험실",en:"Laboratory",order:3},
+    {id:"gas",ko:"외부 가스",en:"Outside Gas",order:4},
+    {id:"outlab",ko:"실험실 외부 (보호구)",en:"Outside Lab (PPE)",order:5}
+  ];
+  const units = ["EA","Bottle","Pack","Box","Case","Roll","Pair","Cylinder","L","mL","Gallon"];
+  const rows = [
+    ["icp_sol","ICP-MS Tuning Solution 10ppm","5190-0465","","Bottle"],
+    ["icp_sol","2% HNO3","","","Bottle"],
+    ["icp_sol","DI Water","","","Bottle"],
+    ["icp_part","ICP-MS Peripump Tube Drain (Yellow)","5005-0022","12 pk","Pack"],
+    ["icp_part","Peristaltic Pump Tubing for Integrated Autosampler (I-AS)","G3160-65326","","Pack","","ORDER Extra"],
+    ["icp_part","Vacuum Fluid (Mass Spectrometry Mechanical)","X3760-64004","","Bottle"],
+    ["lab","5% HNO3","","","Bottle"],
+    ["lab","2% HNO3","","","Bottle"],
+    ["lab","DI Water","","","Bottle"],
+    ["lab","Waste Container","","","EA"],
+    ["lab","Nonwoven Cleanroom Wipes","","","Pack",7],
+    ["lab","99% Isopropyl Alcohol","","","Bottle",1],
+    ["lab","Liquid Acid Cleaner Detergent (Citranox)","","","Bottle",1],
+    ["lab","HDPE Wide Mouth Bottle 500mL","","500mL","EA"],
+    ["lab","HDPE Wide Mouth Bottle 125mL","","125mL","EA",7],
+    ["lab","8x8 Clear Bags","","100/pack","Pack"],
+    ["lab","Pipette Tips 1-10mL (Blue)","","","Box"],
+    ["lab","Pipette Tips 1000-5000µL (Red)","","","Box"],
+    ["lab","Pipette Tips 100-1000µL (Yellow)","","","Box"],
+    ["lab","Pipette Tips 10-100µL (Green)","","","Box"],
+    ["lab","Gloves","","","Box"],
+    ["lab","Labeling Tape","","","Roll"],
+    ["lab","ICP-MS CAL 1","","","Bottle"],
+    ["lab","ICP-MS CAL 2","","","Bottle"],
+    ["lab","ICP-MS CAL 3","","","Bottle"],
+    ["lab","ICP-MS CAL 4","","","Bottle"],
+    ["lab","Q-Tips for Rod/Cone Cleaning","","","Pack"],
+    ["gas","Argon","","","Cylinder"],
+    ["gas","Helium","","","Cylinder"],
+    ["gas","Hydrogen","","","Cylinder"],
+    ["outlab","Lab Coat","","","EA"],
+    ["outlab","Safety Glasses","","","EA"],
+    ["outlab","Mask","","","Box"],
+    ["outlab","Gloves","","","Box"],
+    ["outlab","Hair Net","","","Pack"],
+    ["outlab","Shoe Cover","","","Pack"]
+  ];
+  const items = {}; const now = Date.now();
+  rows.forEach((r,i)=>{ const id="it"+(now+i).toString(36);
+    items[id]={loc:r[0],name:r[1],partNo:r[2],pack:r[3],unit:r[4],stock:num(r[5]),min:1,orderQty:null,vendor:"",note:r[6]||"",orderStatus:"",sort:i,createdAt:now}; });
+  const l = {}; locs.forEach(x=>l[x.id]=x);
+  return {settings:{cycle:"monthly",startDate:today(),units},locations:l,items,inspections:{}};
+}
+
+/* ---------------- data layer ---------------- */
+let S = {settings:{},locations:{},items:{},inspections:{}};
+let fb = null;
+const useFB = !!FIREBASE_CONFIG.apiKey;
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+function getPath(obj,path){return path.split("/").reduce((o,k)=>o?.[k],obj);}
+function setPath(obj,path,val){const ks=path.split("/");let o=obj;ks.slice(0,-1).forEach(k=>{if(typeof o[k]!=="object"||o[k]===null)o[k]={};o=o[k];});
+  if(val===null||val===undefined) delete o[ks.at(-1)]; else o[ks.at(-1)]=val;}
+function put(path,val){
+  if(useFB){ fb.ref(DB_ROOT+"/"+path).set(val===undefined?null:val); }
+  else { setPath(S,path,val); persistLocal(); render(); }
+}
+function multi(updates){ // {path:val}
+  if(useFB){ const u={}; for(const k in updates) u[k]=updates[k]===undefined?null:updates[k]; fb.ref(DB_ROOT).update(u); }
+  else { for(const k in updates) setPath(S,k,updates[k]); persistLocal(); render(); }
+}
+function persistLocal(){localStorage.setItem(LS_KEY,JSON.stringify(S));}
+function normalize(v){v=v||{};return {settings:v.settings||{cycle:"monthly",units:[]},locations:v.locations||{},items:v.items||{},inspections:v.inspections||{}};}
+
+function initData(){
+  const dot=document.getElementById("dbdot"), md=document.getElementById("dbmode");
+  if(useFB){
+    dot.classList.add("on"); md.dataset.t="cloud";
+    firebase.initializeApp(FIREBASE_CONFIG); fb=firebase.database();
+    fb.ref(DB_ROOT).on("value",snap=>{
+      const v=snap.val();
+      if(!v||!v.settings){ fb.ref(DB_ROOT+"/settings").transaction(cur=>cur||null).then(r=>{ if(!r.snapshot.exists()) fb.ref(DB_ROOT).set(seed()); }); return; }
+      S=normalize(v); if(!Array.isArray(S.settings.units)) S.settings.units=Object.values(S.settings.units||{});
+      render();
+    }, err=>{ dot.classList.remove("on"); md.textContent="Firebase error: "+err.message; });
+    fb.ref(".info/connected").on("value",c=>dot.classList.toggle("on",!!c.val()));
+  } else {
+    const raw=localStorage.getItem(LS_KEY);
+    md.dataset.t="local";
+    S = raw ? normalize(JSON.parse(raw)) : seed(); persistLocal(); render();
+  }
+}
+
+/* ---------------- helpers ---------------- */
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>(v===""||v===null||v===undefined||isNaN(+v))?null:+v;
+const locName=id=>{const l=S.locations[id];return l?(lang==="ko"?l.ko:l.en)||l.ko||l.en:"-";};
+const locList=()=>Object.entries(S.locations).sort((a,b)=>(a[1].order||0)-(b[1].order||0));
+const itemList=()=>Object.entries(S.items).sort((a,b)=>{const la=S.locations[a[1].loc]?.order||99, lb=S.locations[b[1].loc]?.order||99; return la-lb||(a[1].sort||0)-(b[1].sort||0)||a[1].name.localeCompare(b[1].name);});
+const needs=it=>num(it.stock)!==null&&num(it.min)!==null&&+it.stock<=+it.min;
+function suggestQty(it){ if(num(it.orderQty)) return +it.orderQty; const s=+it.stock||0, m=+it.min||0; return Math.max(m*2-s,1); }
+function statusTag(it){
+  if(it.orderStatus==="ordered") return `<span class="tag ord">${t("ordered")}</span>`;
+  if(it.stock===null||it.stock===undefined) return `<span class="tag na">${t("na")}</span>`;
+  return needs(it)?`<span class="tag need">${t("need")}</span>`:`<span class="tag ok">${t("ok")}</span>`;
+}
+function toast(m){const d=document.createElement("div");d.className="toast";d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),1800);}
+function lastInspection(){return Object.values(S.inspections).sort((a,b)=>b.date.localeCompare(a.date))[0];}
+function addCycle(dateStr){const d=new Date(dateStr+"T00:00:00");
+  if(S.settings.cycle==="biweekly") d.setDate(d.getDate()+14); else d.setMonth(d.getMonth()+1);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function dueInfo(){
+  const last=lastInspection(); const base=last?last.date:(S.settings.startDate||today());
+  const next=last?addCycle(base):base;
+  const diff=Math.round((new Date(next+"T00:00:00")-new Date(today()+"T00:00:00"))/864e5);
+  return {last,next,diff};
+}
+function csvDownload(name,rows){
+  const s="﻿"+rows.map(r=>r.map(c=>{c=String(c??"");return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(",")).join("\r\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv"}));a.download=name;a.click();
+}
+function unitOptions(sel){return (S.settings.units||[]).map(u=>`<option ${u===sel?"selected":""}>${esc(u)}</option>`).join("");}
+function locOptions(sel,all){return (all?`<option value="">${t("allLoc")}</option>`:"")+locList().map(([id])=>`<option value="${id}" ${id===sel?"selected":""}>${esc(locName(id))}</option>`).join("");}
+
+/* ---------------- UI state ---------------- */
+let tab="items", fLoc="", fQ="", inspDraft=null, openHist={};
+const TABS=["items","insp","buy","hist","set"];
+const TAB_KEY={items:"tabItems",insp:"tabInsp",buy:"tabBuy",hist:"tabHist",set:"tabSet"};
+
+function render(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+  document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===lang));
+  const needN=Object.values(S.items).filter(it=>needs(it)&&it.orderStatus!=="ordered").length;
+  document.getElementById("nav").innerHTML=TABS.map(k=>`<button data-tab="${k}" class="${tab===k?"on":""}">${t(TAB_KEY[k])}${k==="buy"&&needN?`<span class="badge">${needN}</span>`:""}</button>`).join("");
+  const app=document.getElementById("app");
+  const fn={items:vItems,insp:vInsp,buy:vBuy,hist:vHist,set:vSet}[tab];
+  const keep=document.activeElement?.id; const pos=keep?document.activeElement.selectionStart:null;
+  app.innerHTML=vBanner()+fn();
+  if(keep){const e=document.getElementById(keep); if(e){e.focus(); try{e.setSelectionRange(pos,pos);}catch(_){}}}
+}
+
+function vBanner(){
+  const {last,next,diff}=dueInfo();
+  const cls=diff<0?"over":diff<=3?"due":"ok";
+  const msg=diff<0?`${t("overdue")} (${-diff}${t("days")})`:diff<=3?`${t("dueSoon")} (D-${diff})`:`${t("onTrack")} (D-${diff})`;
+  const items=Object.values(S.items);
+  return `<div class="banner ${cls}"><b>${t("nextInsp")}: ${next}</b><span>${msg}</span>
+   <span class="muted">${t("lastInsp")}: ${last?last.date+" · "+esc(last.inspector):t("never")} · ${S.settings.cycle==="biweekly"?t("biweekly"):t("monthly")}</span>
+   <span class="sp"></span>${tab!=="insp"?`<button class="btn p" data-act="goinsp">${t("startInsp")}</button>`:""}</div>
+  <div class="cards">
+   <div class="kpi"><div class="l">${t("kTotal")}</div><div class="v">${items.length}</div></div>
+   <div class="kpi"><div class="l">${t("kNeed")}</div><div class="v" style="color:var(--red)">${items.filter(i=>needs(i)&&i.orderStatus!=="ordered").length}</div></div>
+   <div class="kpi"><div class="l">${t("kOrdered")}</div><div class="v" style="color:var(--amb)">${items.filter(i=>i.orderStatus==="ordered").length}</div></div>
+   <div class="kpi"><div class="l">${t("kUnchecked")}</div><div class="v" style="color:var(--mute)">${items.filter(i=>i.stock===null||i.stock===undefined).length}</div></div>
+  </div>`;
+}
+
+/* ---- Items ---- */
+function vItems(){
+  const q=fQ.toLowerCase();
+  const list=itemList().filter(([,it])=>(!fLoc||it.loc===fLoc)&&(!q||(it.name+" "+(it.partNo||"")+" "+(it.vendor||"")).toLowerCase().includes(q)));
+  let rows="",cur=null;
+  list.forEach(([id,it])=>{
+    if(it.loc!==cur){cur=it.loc;rows+=`<tr class="grp"><td colspan="9">${esc(locName(cur))}</td></tr>`;}
+    rows+=`<tr class="${needs(it)?"need":""}"><td>${esc(it.name)}${it.note?`<div class="muted">${esc(it.note)}</div>`:""}</td>
+     <td>${esc(it.partNo)}</td><td>${esc(it.pack)}</td><td>${esc(it.unit)}</td>
+     <td class="n">${it.stock??"-"}</td><td class="n">${it.min??"-"}</td><td>${esc(it.vendor)}</td><td>${statusTag(it)}</td>
+     <td class="n noprint"><button class="btn s" data-act="edit" data-id="${id}">${t("edit")}</button> <button class="btn s d" data-act="del" data-id="${id}">${t("del")}</button></td></tr>`;
+  });
+  return `<div class="panel"><div class="bar">
+    <input id="fq" placeholder="${t("search")}" value="${esc(fQ)}" style="min-width:220px">
+    <select id="floc">${locOptions(fLoc,true)}</select><span class="sp"></span>
+    <button class="btn" data-act="csvItems">${t("csv")}</button><button class="btn" data-act="print">${t("print")}</button>
+    <button class="btn p" data-act="add">${t("add")}</button></div>
+   <div class="tw"><table><thead><tr><th>${t("item")}</th><th>${t("part")}</th><th>${t("pack")}</th><th>${t("unit")}</th><th class="n">${t("stock")}</th><th class="n">${t("min")}</th><th>${t("vendor")}</th><th>${t("status")}</th><th class="noprint"></th></tr></thead>
+   <tbody>${rows||`<tr><td colspan="9" class="muted">${t("noItems")}</td></tr>`}</tbody></table></div></div>`;
+}
+function itemModal(id){
+  const it=id?S.items[id]:{loc:fLoc||locList()[0]?.[0],name:"",partNo:"",pack:"",unit:S.settings.units?.[0]||"EA",stock:null,min:1,orderQty:null,vendor:"",note:""};
+  const bg=document.createElement("div");bg.className="modal-bg";
+  bg.innerHTML=`<div class="modal"><h3>${id?t("editItem"):t("addItem")}</h3><div class="grid2">
+   <label class="full">${t("item")}<input id="m_name" value="${esc(it.name)}"></label>
+   <label>${t("loc")}<select id="m_loc">${locOptions(it.loc)}</select></label>
+   <label>${t("part")}<input id="m_part" value="${esc(it.partNo)}"></label>
+   <label>${t("unit")}<select id="m_unit">${unitOptions(it.unit)}</select></label>
+   <label>${t("pack")}<input id="m_pack" value="${esc(it.pack)}" placeholder="${t("packPh")}"></label>
+   <label>${t("stock")}<input id="m_stock" type="number" step="any" min="0" value="${it.stock??""}"></label>
+   <label>${t("min")}<input id="m_min" type="number" step="any" min="0" value="${it.min??""}"></label>
+   <label>${t("orderQty")}<input id="m_oq" type="number" step="any" min="0" value="${it.orderQty??""}"></label>
+   <label>${t("vendor")}<input id="m_vendor" value="${esc(it.vendor)}"></label>
+   <label class="full">${t("note")}<input id="m_note" value="${esc(it.note)}"></label></div>
+   <div class="mf"><button class="btn" data-x>${t("cancel")}</button><button class="btn p" data-ok>${t("save")}</button></div></div>`;
+  document.body.appendChild(bg);
+  bg.querySelector("[data-x]").onclick=()=>bg.remove();
+  bg.querySelector("[data-ok]").onclick=()=>{
+    const g=k=>bg.querySelector("#m_"+k).value.trim();
+    if(!g("name")) return alert(t("nameReq"));
+    const nid=id||uid("it");
+    const o={...(id?S.items[id]:{sort:Date.now(),createdAt:Date.now(),orderStatus:""}),name:g("name"),loc:g("loc"),partNo:g("part"),unit:g("unit"),pack:g("pack"),
+      stock:num(g("stock")),min:num(g("min")),orderQty:num(g("oq")),vendor:g("vendor"),note:g("note"),updatedAt:Date.now()};
+    put("items/"+nid,o); bg.remove(); toast(t("saved"));
+  };
+  bg.querySelector("#m_name").focus();
+}
+
+/* ---- Inspection ---- */
+function newDraft(){inspDraft={date:today(),inspector:localStorage.getItem("lab_inspector")||"",q:{}};}
+function vInsp(){
+  if(!inspDraft) newDraft();
+  let rows="",cur=null;
+  itemList().forEach(([id,it])=>{
+    if(it.loc!==cur){cur=it.loc;rows+=`<tr class="grp"><td colspan="6">${esc(locName(cur))}</td></tr>`;}
+    const v=inspDraft.q[id]??""; const n=num(v);
+    const nd=n!==null&&num(it.min)!==null&&n<=+it.min;
+    rows+=`<tr class="${nd?"need":""}"><td>${esc(it.name)}${it.partNo?` <span class="muted">${esc(it.partNo)}</span>`:""}</td>
+     <td class="n muted">${it.stock??"-"}</td>
+     <td class="n"><input class="qty" id="q_${id}" data-q="${id}" type="number" step="any" min="0" value="${v}"></td>
+     <td>${esc(it.unit)}${it.pack?` <span class="muted">(${esc(it.pack)})</span>`:""}</td><td class="n">${it.min??"-"}</td>
+     <td>${n===null?"":nd?`<span class="tag need">${t("need")}</span>`:`<span class="tag ok">${t("ok")}</span>`}</td></tr>`;
+  });
+  return `<div class="panel"><div class="bar">
+   <label>${t("inspDate")} <input id="i_date" type="date" value="${inspDraft.date}"></label>
+   <label>${t("inspector")} <input id="i_by" value="${esc(inspDraft.inspector)}"></label>
+   <span class="sp"></span><button class="btn" data-act="fillStock">${t("copyStock")}</button><button class="btn" data-act="clearQ">${t("clearAll")}</button>
+   <button class="btn p" data-act="saveInsp">${t("saveInsp")}</button></div>
+   <p class="muted" style="margin:0 0 10px">${t("inspHint")}</p>
+   <div class="tw"><table><thead><tr><th>${t("item")}</th><th class="n">${t("stock")}</th><th class="n">${t("counted")}</th><th>${t("unit")}</th><th class="n">${t("min")}</th><th>${t("status")}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function saveInsp(){
+  if(!inspDraft.inspector.trim()) return alert(t("inspectorReq"));
+  const lines=[]; const up={};
+  itemList().forEach(([id,it])=>{
+    const n=num(inspDraft.q[id]); if(n===null) return;
+    const nd=num(it.min)!==null&&n<=+it.min;
+    lines.push({itemId:id,name:it.name,loc:it.loc,partNo:it.partNo||"",unit:it.unit||"",prev:it.stock??null,qty:n,min:it.min??null,need:nd});
+    up["items/"+id+"/stock"]=n; up["items/"+id+"/lastChecked"]=inspDraft.date;
+  });
+  if(!lines.length) return;
+  const iid=uid("in");
+  up["inspections/"+iid]={date:inspDraft.date,inspector:inspDraft.inspector.trim(),lines,needCount:lines.filter(l=>l.need).length,createdAt:Date.now()};
+  localStorage.setItem("lab_inspector",inspDraft.inspector.trim());
+  multi(up); newDraft(); tab="buy"; render(); toast(t("inspSaved"));
+}
+
+/* ---- Purchase ---- */
+function vBuy(){
+  const list=itemList().filter(([,it])=>needs(it)||it.orderStatus==="ordered");
+  const rows=list.map(([id,it])=>`<tr><td>${esc(locName(it.loc))}</td><td>${esc(it.name)}${it.note?`<div class="muted">${esc(it.note)}</div>`:""}</td><td>${esc(it.partNo)}</td><td>${esc(it.vendor)}</td>
+    <td class="n">${it.stock??"-"}</td><td class="n">${it.min??"-"}</td><td class="n"><b>${suggestQty(it)}</b></td><td>${esc(it.unit)}${it.pack?` <span class="muted">(${esc(it.pack)})</span>`:""}</td>
+    <td>${statusTag(it)}${it.orderedAt?`<div class="muted">${it.orderedAt}</div>`:""}</td>
+    <td class="n noprint">${it.orderStatus==="ordered"
+      ?`<button class="btn s p" data-act="recv" data-id="${id}">${t("markRecv")}</button> <button class="btn s" data-act="unord" data-id="${id}">${t("cancelOrd")}</button>`
+      :`<button class="btn s" data-act="ord" data-id="${id}">${t("markOrd")}</button>`}</td></tr>`).join("");
+  return `<div class="panel"><div class="bar"><b>${t("buyTitle")}</b><span class="sp"></span>
+   <button class="btn" data-act="csvBuy">${t("csv")}</button><button class="btn" data-act="print">${t("print")}</button></div>
+   <div class="tw"><table><thead><tr><th>${t("loc")}</th><th>${t("item")}</th><th>${t("part")}</th><th>${t("vendor")}</th><th class="n">${t("stock")}</th><th class="n">${t("min")}</th><th class="n">${t("suggest")}</th><th>${t("unit")}</th><th>${t("status")}</th><th class="noprint"></th></tr></thead>
+   <tbody>${rows||`<tr><td colspan="10" class="muted">${t("noNeed")}</td></tr>`}</tbody></table></div></div>`;
+}
+
+/* ---- History ---- */
+function vHist(){
+  const list=Object.entries(S.inspections).sort((a,b)=>b[1].date.localeCompare(a[1].date)||(b[1].createdAt||0)-(a[1].createdAt||0));
+  if(!list.length) return `<div class="panel muted">${t("noHist")}</div>`;
+  return list.map(([id,r])=>{
+    const lines=r.lines||[];
+    return `<details ${openHist[id]?"open":""} data-h="${id}"><summary><b>${r.date}</b><span>${t("inspector")}: ${esc(r.inspector)}</span>
+     <span class="muted">${t("itemsChecked")}: ${lines.length}</span>${r.needCount?`<span class="tag need">${t("needCnt")} ${r.needCount}</span>`:`<span class="tag ok">${t("ok")}</span>`}
+     <span class="sp"></span><button class="btn s" data-act="csvHist" data-id="${id}">${t("csv")}</button> <button class="btn s d" data-act="delHist" data-id="${id}">${t("del")}</button></summary>
+     <div class="tw"><table><thead><tr><th>${t("loc")}</th><th>${t("item")}</th><th class="n">${t("counted")}</th><th>${t("unit")}</th><th class="n">${t("min")}</th><th>${t("status")}</th></tr></thead><tbody>
+     ${lines.map(l=>`<tr class="${l.need?"need":""}"><td>${esc(locName(l.loc))}</td><td>${esc(S.items[l.itemId]?.name||l.name)}</td><td class="n">${l.qty}</td><td>${esc(l.unit)}</td><td class="n">${l.min??"-"}</td><td>${l.need?`<span class="tag need">${t("need")}</span>`:`<span class="tag ok">${t("ok")}</span>`}</td></tr>`).join("")}
+     </tbody></table></div></details>`;
+  }).join("");
+}
+
+/* ---- Settings ---- */
+function vSet(){
+  const used=new Set(Object.values(S.items).map(i=>i.unit));
+  const usedL=new Set(Object.values(S.items).map(i=>i.loc));
+  return `<div class="panel"><h3 style="margin-top:0">${t("setCycle")}</h3><div class="bar">
+    <select id="s_cycle"><option value="monthly" ${S.settings.cycle!=="biweekly"?"selected":""}>${t("monthly")}</option><option value="biweekly" ${S.settings.cycle==="biweekly"?"selected":""}>${t("biweekly")}</option></select>
+    <label class="muted">${t("cycleStart")} <input type="date" id="s_start" value="${S.settings.startDate||today()}"></label></div></div>
+   <div class="panel"><h3 style="margin-top:0">${t("setUnits")}</h3><p class="muted">${t("setUnitsHint")}</p>
+    <div class="chips" style="margin-bottom:10px">${(S.settings.units||[]).map((u,i)=>`<span class="chip">${esc(u)}<button data-act="delUnit" data-i="${i}" title="${used.has(u)?t("unitInUse"):t("del")}">×</button></span>`).join("")}</div>
+    <div class="bar"><input id="s_unit" placeholder="${t("newUnit")}"><button class="btn" data-act="addUnit">${t("addBtn")}</button></div></div>
+   <div class="panel"><h3 style="margin-top:0">${t("setLocs")}</h3>
+    <table><thead><tr><th>${t("locKo")}</th><th>${t("locEn")}</th><th class="n"></th></tr></thead><tbody>
+    ${locList().map(([id,l])=>`<tr><td><input data-lk="${id}" data-f="ko" value="${esc(l.ko)}" style="width:100%"></td><td><input data-lk="${id}" data-f="en" value="${esc(l.en)}" style="width:100%"></td>
+      <td class="n"><button class="btn s d" data-act="delLoc" data-id="${id}" ${usedL.has(id)?`disabled title="${t("locInUse")}"`:""}>${t("del")}</button></td></tr>`).join("")}
+    <tr><td><input id="s_lko" placeholder="${t("locKo")}" style="width:100%"></td><td><input id="s_len" placeholder="${t("locEn")}" style="width:100%"></td><td class="n"><button class="btn" data-act="addLoc">${t("addBtn")}</button></td></tr>
+    </tbody></table></div>
+   <div class="panel"><h3 style="margin-top:0">${t("data")}</h3><div class="bar">
+    <button class="btn" data-act="exportJson">${t("exportJson")}</button>
+    <label class="btn">${t("importJson")}<input type="file" id="s_imp" accept=".json" hidden></label></div></div>`;
+}
+
+/* ---------------- events ---------------- */
+document.querySelector(".lang").onclick=e=>{const l=e.target.dataset.l;if(l){lang=l;localStorage.setItem("lab_lang",l);render();}};
+document.getElementById("nav").onclick=e=>{const b=e.target.closest("[data-tab]");if(b){tab=b.dataset.tab;render();}};
+document.getElementById("app").addEventListener("input",e=>{
+  const el=e.target;
+  if(el.id==="fq"){fQ=el.value;render();}
+  else if(el.dataset.q){inspDraft.q[el.dataset.q]=el.value;render();}
+  else if(el.id==="i_by"){inspDraft.inspector=el.value;}
+});
+document.getElementById("app").addEventListener("change",e=>{
+  const el=e.target;
+  if(el.id==="floc"){fLoc=el.value;render();}
+  else if(el.id==="i_date"){inspDraft.date=el.value;}
+  else if(el.id==="s_cycle"){put("settings/cycle",el.value);}
+  else if(el.id==="s_start"){put("settings/startDate",el.value);}
+  else if(el.dataset.lk){put(`locations/${el.dataset.lk}/${el.dataset.f}`,el.value.trim());}
+  else if(el.id==="s_imp"){const f=el.files[0];if(!f)return;f.text().then(txt=>{if(!confirm(t("resetConfirm")))return;
+    const d=normalize(JSON.parse(txt)); if(useFB) fb.ref(DB_ROOT).set(d); else {S=d;persistLocal();render();} toast(t("importOk"));});}
+});
+document.getElementById("app").addEventListener("toggle",e=>{const d=e.target;if(d.dataset?.h) openHist[d.dataset.h]=d.open;},true);
+document.getElementById("app").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  const id=b.dataset.id, a=b.dataset.act;
+  if(b.closest("summary")) e.preventDefault();
+  switch(a){
+   case "goinsp": tab="insp"; render(); break;
+   case "add": itemModal(null); break;
+   case "edit": itemModal(id); break;
+   case "del": if(confirm(t("confirmDel")+"\n"+S.items[id].name)){put("items/"+id,null);toast(t("deleted"));} break;
+   case "print": window.print(); break;
+   case "fillStock": itemList().forEach(([iid,it])=>{if(it.stock!==null&&it.stock!==undefined) inspDraft.q[iid]=it.stock;}); render(); break;
+   case "clearQ": inspDraft.q={}; render(); break;
+   case "saveInsp": saveInsp(); break;
+   case "ord": multi({[`items/${id}/orderStatus`]:"ordered",[`items/${id}/orderedAt`]:today()}); break;
+   case "unord": multi({[`items/${id}/orderStatus`]:"",[`items/${id}/orderedAt`]:null}); break;
+   case "recv": { const it=S.items[id]; const v=prompt(t("recvQty"),suggestQty(it)); if(v===null) return; const n=num(v); if(n===null) return;
+     multi({[`items/${id}/stock`]:(+it.stock||0)+n,[`items/${id}/orderStatus`]:"",[`items/${id}/orderedAt`]:null,[`items/${id}/lastReceived`]:today()}); break; }
+   case "delHist": if(confirm(t("delInsp"))) put("inspections/"+id,null); break;
+   case "csvItems": csvDownload(`LabSupplies_Items_${today()}.csv`,[[t("loc"),t("item"),t("part"),t("pack"),t("unit"),t("stock"),t("min"),t("orderQty"),t("vendor"),t("status"),t("note")],
+     ...itemList().map(([,it])=>[locName(it.loc),it.name,it.partNo,it.pack,it.unit,it.stock??"",it.min??"",it.orderQty??"",it.vendor,it.orderStatus==="ordered"?t("ordered"):it.stock==null?t("na"):needs(it)?t("need"):t("ok"),it.note])]); break;
+   case "csvBuy": csvDownload(`LabSupplies_Purchase_${today()}.csv`,[[t("loc"),t("item"),t("part"),t("vendor"),t("stock"),t("min"),t("suggest"),t("unit"),t("pack"),t("status")],
+     ...itemList().filter(([,it])=>needs(it)||it.orderStatus==="ordered").map(([,it])=>[locName(it.loc),it.name,it.partNo,it.vendor,it.stock,it.min,suggestQty(it),it.unit,it.pack,it.orderStatus==="ordered"?t("ordered"):t("need")])]); break;
+   case "csvHist": { const r=S.inspections[id]; csvDownload(`LabSupplies_Check_${r.date}.csv`,[[t("inspDate"),t("inspector"),t("loc"),t("item"),t("part"),t("counted"),t("unit"),t("min"),t("status")],
+     ...(r.lines||[]).map(l=>[r.date,r.inspector,locName(l.loc),l.name,l.partNo,l.qty,l.unit,l.min??"",l.need?t("need"):t("ok")])]); break; }
+   case "addUnit": { const v=document.getElementById("s_unit").value.trim(); if(!v||(S.settings.units||[]).includes(v)) return; put("settings/units",[...(S.settings.units||[]),v]); break; }
+   case "delUnit": { const u=S.settings.units[+b.dataset.i]; if(Object.values(S.items).some(i=>i.unit===u)) return alert(t("unitInUse")); put("settings/units",S.settings.units.filter(x=>x!==u)); break; }
+   case "addLoc": { const ko=document.getElementById("s_lko").value.trim(), en=document.getElementById("s_len").value.trim(); if(!ko&&!en) return;
+     const max=Math.max(0,...Object.values(S.locations).map(l=>l.order||0)); put("locations/"+uid("lc"),{ko:ko||en,en:en||ko,order:max+1}); break; }
+   case "delLoc": if(confirm(t("del")+"?")) put("locations/"+id,null); break;
+   case "exportJson": { const a2=document.createElement("a"); a2.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"})); a2.download=`LabSupplies_Backup_${today()}.json`; a2.click(); break; }
+  }
+});
+
+initData();
+</script>
+</body>
+</html>
